@@ -12,6 +12,4 @@ dados_perfil = {
 
 matriz_perfil = pd.DataFrame(dados_perfil)
 
-mapeamento_perfil = {0: 'Alta Prioridade', 1: 'Média Prioridade', 2: 'Baixa Prioridade'}
-
 #print(matriz_perfil)

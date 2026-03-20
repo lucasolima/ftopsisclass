@@ -6,6 +6,7 @@ from processamento.ponderar_matriz import ponderar_matriz
 from processamento.obter_solucao_ideal import obter_solucao_ideal
 from processamento.calcular_distancia_euclidiana import calcular_distancia_euclidiana
 from processamento.calcular_coeficiente_de_proximidade import calcular_coeficiente_de_proximidade
+from processamento.gerar_matriz_coeficientes import gerar_matriz_coeficientes
 
 
 matriz_decisao_normalizada = normalizar_matriz(matriz_decisao, tipo_criterios)
@@ -24,6 +25,12 @@ cc_alta_prioridade = calcular_coeficiente_de_proximidade(d_mais_alta_prioridade,
 cc_media_prioridade = calcular_coeficiente_de_proximidade(d_mais_media_prioridade, d_menos_media_prioridade)
 cc_baixa_prioridade = calcular_coeficiente_de_proximidade(d_mais_baixa_prioridade, d_menos_baixa_prioridade)
 
-print(cc_alta_prioridade)
-print(cc_media_prioridade)
-print(cc_baixa_prioridade)
+dict_ccs = {
+    'Alta Prioridade': cc_alta_prioridade,
+    'Média Prioridade': cc_media_prioridade,
+    'Baixa Prioridade': cc_baixa_prioridade
+}
+matriz_coeficientes = gerar_matriz_coeficientes(dict_ccs)
+
+print("\n--- Matriz de Coeficientes de Proximidade (CC) ---")
+print(matriz_coeficientes)
