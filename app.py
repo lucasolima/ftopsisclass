@@ -1,5 +1,5 @@
-from matriz_decisao import matriz_decisao
-from matriz_perfil import matriz_perfil, mapeamento_perfil
+from matrizes.matriz_decisao import matriz_decisao
+from matrizes.matriz_perfil import matriz_perfil
 from processamento.normalizar_matriz import normalizar_matriz
 from processamento.ponderar_matriz import ponderar_matriz
 from pesos_criterios import pesos, tipo_criterios
