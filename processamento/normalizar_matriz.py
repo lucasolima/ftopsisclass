@@ -12,18 +12,14 @@ def normalizar_matriz(matriz_decisao, tipo_criterios):
             if maior_ultima_coluna == 0:
                 maior_ultima_coluna = 1.0
             matriz_normalizada[coluna] = matriz_decisao[coluna].apply(
-                lambda x: np.floor((x / maior_ultima_coluna) * 10 + 0.5) / 10
+                lambda x: x / maior_ultima_coluna
             )
         elif criterio == "custo":
             menor_primeira_coluna = np.min(valores_coluna[:, 0])
             matriz_normalizada[coluna] = matriz_decisao[coluna].apply(
-                lambda x: np.floor(
-                    np.divide(menor_primeira_coluna, x[::-1], out=np.zeros_like(x, dtype=float), where=x[::-1] != 0) * 10 + 0.5
-                ) / 10
+                lambda x: np.divide(menor_primeira_coluna, x[::-1], out=np.zeros_like(x, dtype=float), where=x[::-1] != 0)
             )
         else:
             raise ValueError(f"Tipo de critério inválido para {coluna}: {criterio}")
 
     return matriz_normalizada
-
-
