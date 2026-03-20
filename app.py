@@ -14,12 +14,18 @@ matriz_decisao_ponderada = ponderar_matriz(matriz_decisao_normalizada, pesos)
 matriz_perfil_normalizada = normalizar_matriz(matriz_perfil, tipo_criterios, matriz_referencia=matriz_decisao)
 matriz_perfil_ponderada = ponderar_matriz(matriz_perfil_normalizada, pesos)
 
+#print(matriz_perfil_normalizada["C5"])
+#print(matriz_perfil_ponderada["C5"])
 
 alta_prioridade, media_prioridade, baixa_prioridade = obter_solucao_ideal(matriz_perfil_ponderada)
 
 d_mais_alta_prioridade, d_menos_alta_prioridade = calcular_distancia_euclidiana(matriz_decisao_ponderada, alta_prioridade)
 d_mais_media_prioridade, d_menos_media_prioridade = calcular_distancia_euclidiana(matriz_decisao_ponderada, media_prioridade)
 d_mais_baixa_prioridade, d_menos_baixa_prioridade = calcular_distancia_euclidiana(matriz_decisao_ponderada, baixa_prioridade)
+
+#print(d_mais_alta_prioridade.round(3))
+#print(d_menos_alta_prioridade.round(3))
+
 
 cc_alta_prioridade = calcular_coeficiente_de_proximidade(d_mais_alta_prioridade, d_menos_alta_prioridade)
 cc_media_prioridade = calcular_coeficiente_de_proximidade(d_mais_media_prioridade, d_menos_media_prioridade)
@@ -33,4 +39,4 @@ dict_ccs = {
 matriz_coeficientes = gerar_matriz_coeficientes(dict_ccs)
 
 print("\n--- Matriz de Coeficientes de Proximidade (CC) ---")
-print(matriz_coeficientes)
+print(matriz_coeficientes.astype(float).round(3))

@@ -16,7 +16,7 @@ pesos_ = {
     "C3": [IM],
     "C4": [BI],
     "C5": [BI],
-    "C6": [BI]
+    "C6": [MAI]
 }
 
 pesos = pd.DataFrame(pesos_)
