@@ -1,8 +1,8 @@
 from matriz_decisao import matriz_decisao
-from pesos_criterios import tipo_criterios
+from pesos_criterios import pesos, tipo_criterios
 import numpy as np
 
-def normalizar_matriz_criterios(matriz_decisao, tipo_criterios):
+def normalizar_matriz(matriz_decisao, tipo_criterios):
     matriz_normalizada = matriz_decisao.copy(deep=True)
 
     for coluna in matriz_decisao.columns:
@@ -28,5 +28,19 @@ def normalizar_matriz_criterios(matriz_decisao, tipo_criterios):
 
     return matriz_normalizada
 
-matriz_normalizada = normalizar_matriz_criterios(matriz_decisao, tipo_criterios)
-print(matriz_normalizada)
+matriz_normalizada = normalizar_matriz(matriz_decisao, tipo_criterios)
+
+def ponderar_matriz(matriz_normalizada, pesos):
+    matriz_ponderada = matriz_normalizada.copy(deep=True)
+
+    for coluna in matriz_normalizada.columns:
+        peso_coluna = pesos[coluna].iloc[0]
+        matriz_ponderada[coluna] = matriz_normalizada[coluna].apply(
+            lambda x: np.floor(x * peso_coluna * 10 + 0.5) / 10
+        )
+
+    return matriz_ponderada
+
+matriz_ponderada = ponderar_matriz(matriz_normalizada, pesos)
+
+print(matriz_ponderada)
