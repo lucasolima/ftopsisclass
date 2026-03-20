@@ -12,3 +12,11 @@ matriz_perfil_ponderada = ponderar_matriz(matriz_perfil_normalizada, pesos)
 
 print(matriz_decisao_ponderada)
 print(matriz_perfil_ponderada)
+
+from processamento.obter_solucao_ideal import obter_solucao_ideal
+
+m1, m2, m3 = obter_solucao_ideal(matriz_perfil_ponderada)
+
+print("Solução Ideal Classe 1:\n", m1, "\n")
+print("Solução Ideal Classe 2:\n", m2, "\n")
+print("Solução Ideal Classe 3:\n", m3, "\n")
