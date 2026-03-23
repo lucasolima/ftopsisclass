@@ -16,4 +16,4 @@ def gerar_matriz_coeficientes(dict_cc):
     # Renomeando as linhas
     df_result.index = [f"DC{i+1}" for i in range(len(df_result))]
     
-    return df_result
+    return df_result.astype(float).round(3)
