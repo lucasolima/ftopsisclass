@@ -16,7 +16,7 @@ from processamento.gerar_matriz_coeficientes import gerar_matriz_coeficientes
 st.set_page_config(page_title="Sistema Fuzzy TOPSIS", layout="wide")
 st.subheader("Sistema Fuzzy TOPSIS")
 
-aba_entradas, aba_resultados = st.tabs(["Entradas de Dados", "Resultados"])
+aba_config, aba_entradas, aba_resultados = st.tabs(["Configuração do Modelo", "Entradas de Dados", "Resultados"])
 
 MAPA_SIGLAS = {
     "MB": MB, "B": B, "M": M, "A": A, "MA": MA,
@@ -55,12 +55,62 @@ def renomear_index_alternativas(df):
         df.index = novo_index
     return df
 
+if "matriz_decisao_config" not in st.session_state:
+    df_inicial = formatar_df_siglas(pd.DataFrame(dados_matriz_decisao))
+    df_inicial = df_inicial.rename(columns=criterios_nomes)
+    df_inicial = renomear_index_alternativas(df_inicial)
+    st.session_state.matriz_decisao_config = df_inicial
+
+with aba_config:
+    st.markdown("**Configuração Individual das Alternativas**")
+    st.info("Selecione uma alternativa abaixo para preencher avaliar as descrições dos critérios de forma otimizada.")
+    
+    # 1. Selecionar qual alternativa editar
+    lista_alts = list(st.session_state.matriz_decisao_config.index)
+    alt_selecionada = st.selectbox("Selecione a Alternativa para avaliar:", lista_alts)
+    
+    # 2. Formulário de edição para a alternativa
+    st.divider()
+    st.markdown(f"**Avaliando:** {alt_selecionada}")
+    
+    col1, col2 = st.columns(2)
+    
+    # Percorrer critérios para gerar os selects
+    idx_crit = 0
+    for k, v in criterios.items():
+        col_nome = v["criterio"]
+        opcoes_desc = [desc[0] for desc in v["descricao"]]
+        mapa_sigla_desc = {desc[1]: desc[0] for desc in v["descricao"]}
+        mapa_desc_sigla = {desc[0]: desc[1] for desc in v["descricao"]}
+        
+        # Valor atual convertido de Sigla (ex: "MA") para Descrição
+        sigla_atual = st.session_state.matriz_decisao_config.at[alt_selecionada, col_nome]
+        desc_atual = mapa_sigla_desc.get(sigla_atual, opcoes_desc[0])
+        idx_default = opcoes_desc.index(desc_atual) if desc_atual in opcoes_desc else 0
+        
+        with col1 if idx_crit % 2 == 0 else col2:
+            nova_desc = st.selectbox(
+                f"{col_nome}", 
+                options=opcoes_desc, 
+                index=idx_default,
+                key=f"sel_{alt_selecionada}_{col_nome}"
+            )
+            # Salvar de volta na tabela no formato sigla
+            st.session_state.matriz_decisao_config.at[alt_selecionada, col_nome] = mapa_desc_sigla[nova_desc]
+        idx_crit += 1
+
+    st.divider()
+    st.markdown("**Visão Geral da Matriz de Decisão (Siglas)**")
+    # Mostrar resumo
+    st.dataframe(st.session_state.matriz_decisao_config, use_container_width=True)
+
+    df_decisao_siglas_from_config = st.session_state.matriz_decisao_config.copy()
+
+
 with aba_entradas:
     st.markdown("**Matriz de Decisão**", help="**Legenda:**  \n**MA** - Muito alto  \n**A** - Alto  \n**M** - Médio  \n**B** - Baixo  \n**MB** - Muito baixo")
-    df_decisao_siglas = formatar_df_siglas(pd.DataFrame(dados_matriz_decisao))
-    df_decisao_siglas = df_decisao_siglas.rename(columns=criterios_nomes)
-    df_decisao_siglas = renomear_index_alternativas(df_decisao_siglas)
-    df_decisao_editada = st.data_editor(df_decisao_siglas, use_container_width=True, height=(len(df_decisao_siglas) + 1) * 35 + 3)
+    df_decisao_siglas = df_decisao_siglas_from_config.copy()
+    df_decisao_editada = st.data_editor(df_decisao_siglas, use_container_width=True, height=(len(df_decisao_siglas) + 1) * 35 + 3, key="entrada_editor")
 
     st.markdown("**Matriz de Perfis**", help="**Legenda:**  \n**MA** - Muito alto  \n**A** - Alto  \n**M** - Médio  \n**B** - Baixo  \n**MB** - Muito baixo")
     df_perfil_siglas = formatar_df_siglas(pd.DataFrame(dados_perfil))

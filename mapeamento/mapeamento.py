@@ -18,7 +18,7 @@ criterios = {
                     ["Alinhado a estratégias governamentais", "A", "AI"],
                     ["Previsto em PDTIC anterior", "M", "IM"],
                     ["Previsto em planos estratégicos", "B", "BI"],
-                    ["Não está previso em nenhum plano", "MB", "MBI"]
+                    ["Não está previsto em nenhum plano", "MB", "MBI"]
                 ]
         },
         
