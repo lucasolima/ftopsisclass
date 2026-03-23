@@ -11,10 +11,65 @@ alternativas = {
 }
 
 criterios = {
-    "C1": "Alinhamento estratégico a planos institucionais",
-    "C2": "Exigência legal/regulatória",
-    "C3": "Abrangência na comunidade universitária",
-    "C4": "Complexidade",
-    "C5": "Esforço",
-    "C6": "Tempo Total",
+    "C1": {
+            "criterio": "Alinhamento estratégico a planos institucionais",
+                "descricao": [
+                    ["Prioridade explícita da alta gestão", "MA", "MAI"],
+                    ["Alinhado a estratégias governamentais", "A", "AI"],
+                    ["Previsto em PDTIC anterior", "M", "IM"],
+                    ["Previsto em planos estratégicos", "B", "BI"],
+                    ["Não está previso em nenhum plano", "MB", "MBI"]
+                ]
+        },
+        
+    "C2": {
+            "criterio": "Exigência legal/regulatória",
+                "descricao": [
+                    ["Mais de uma exigência legal/regulatória externa", "MA", "MAI"],
+                    ["Mais de uma exigência legal/regulatória interna", "A", "AI"],
+                    ["Uma exigência legal/regulatória externa", "M", "IM"],
+                    ["Uma exigência legal/regulatória interna", "B", "BI"],
+                    ["Não é uma exigência legal/regulatória", "MB", "MBI"]
+                ]
+        },
+    "C3": {
+            "criterio": "Abrangência na comunidade universitária",
+                "descricao": [
+                    ["Universidade e a sociedade", "MA", "MAI"],
+                    ["Maioria ou toda a comunidade acadêmica", "A", "AI"],
+                    ["Maioria dos técnicos-administrativos e/ou a maioria dos discentes e/ou docentes", "M", "IM"],
+                    ["Centros, órgãos suplementares ou pró-reitorias isoladamente", "B", "BI"],
+                    ["Afeta apenas um departamento ou setor", "MB", "MBI"]
+                ]
+        },
+    "C4": {
+            "criterio": "Complexidade",
+                "descricao": [
+                    ["Altíssima complexidade (requisitos extremamente complexos e ambíguos, alta interdependência entre sistemas, muitas partes interessadas com necessidades conflitantes, alto risco de mudanças)", "MA", "MBI"],
+                    ["Alta complexidade (requisitos complexos e ambíguos, significativa interdependência entre sistemas, muitas partes interessadas, risco moderado a alto de mudanças)", "A", "BI"],
+                    ["Média complexidade (Requisitos moderadamente complexos e claros, interdependência entre sistemas, algumas partes interessadas, risco moderado de mudanças)", "M", "IM"],
+                    ["Baixa complexidade (Requisitos relativamente claros e precisos, interdependência limitada entre sistemas, algumas partes interessadas, baixo risco de mudanças)", "B", "AI"],
+                    ["Baixíssima complexidade  (Requisitos claramente definidos e precisos, mínima interdependência entre sistemas, poucas partes interessadas, muito baixo risco de mudanças)", "MB", "MAI"]
+                ]
+        },
+    "C5": {
+            "criterio": "Esforço",
+                "descricao": [
+                    ["Altíssimo esforço (customização e integração de alta complexidade, envolvendo mais de um setor e dois ou mais desenvolvedores, com interdependências significativas e coordenação necessária entre equipes)", "MA", "MBI"],
+                    ["Alto esforço (customização que envolve dois ou mais desenvolvedores, tarefas de complexidade média a alta, requerendo coordenação entre desenvolvedores e possivelmente algumas outras áreas)", "A", "BI"],
+                    ["Médio esforço (customização que pode envolver um ou mais desenvolvedores, tarefas de complexidade média e algumas interdependências)", "M", "IM"],
+                    ["Baixo esforço (customização pontual, envolvendo um desenvolvedor, tarefas claramente definidas e de baixa complexidade)", "B", "AI"],
+                    ["Baixíssimo esforço (tarefas simples que envolvem um único desenvolvedor por um curto período)", "MB", "MAI"]
+                ]
+        },
+    "C6": {
+            "criterio": "Tempo Total",
+                "descricao": [
+                    ["Mais de um ano", "MA", "MBI"],
+                    ["De 6 meses a um ano", "A", "BI"],
+                    ["De 3 a 6 meses", "M", "IM"],
+                    ["De 1 a 3 meses", "B", "AI"],
+                    ["Até 1 mês", "MB", "MAI"]
+                ]
+        },
 }

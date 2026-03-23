@@ -34,6 +34,9 @@ def converter_para_sigla(val):
 def sigla_para_array(val):
     return MAPA_SIGLAS.get(val, val)
 
+
+criterios_nomes = {k: v["criterio"] for k, v in criterios.items()}
+
 def formatar_df_siglas(df):
     return df.applymap(converter_para_sigla) if hasattr(df, 'applymap') else df.apply(lambda col: col.map(converter_para_sigla))
 
@@ -55,24 +58,24 @@ def renomear_index_alternativas(df):
 with aba_entradas:
     st.markdown("**Matriz de Decisão**", help="**Legenda:**  \n**MA** - Muito alto  \n**A** - Alto  \n**M** - Médio  \n**B** - Baixo  \n**MB** - Muito baixo")
     df_decisao_siglas = formatar_df_siglas(pd.DataFrame(dados_matriz_decisao))
-    df_decisao_siglas = df_decisao_siglas.rename(columns=criterios)
+    df_decisao_siglas = df_decisao_siglas.rename(columns=criterios_nomes)
     df_decisao_siglas = renomear_index_alternativas(df_decisao_siglas)
     df_decisao_editada = st.data_editor(df_decisao_siglas, use_container_width=True, height=(len(df_decisao_siglas) + 1) * 35 + 3)
 
     st.markdown("**Matriz de Perfis**", help="**Legenda:**  \n**MA** - Muito alto  \n**A** - Alto  \n**M** - Médio  \n**B** - Baixo  \n**MB** - Muito baixo")
     df_perfil_siglas = formatar_df_siglas(pd.DataFrame(dados_perfil))
-    df_perfil_siglas = df_perfil_siglas.rename(columns=criterios)
+    df_perfil_siglas = df_perfil_siglas.rename(columns=criterios_nomes)
     df_perfil_siglas.index = ["Alta Prioridade", "Média Prioridade", "Baixa Prioridade"]
     df_perfil_editada = st.data_editor(df_perfil_siglas, use_container_width=True, height=(len(df_perfil_siglas) + 1) * 35 + 3)
 
     st.markdown("**Pesos dos Critérios**", help="**Legenda:**  \n**MBI** - Muito baixa importância  \n**BI** - Baixa importância  \n**IM** - Importância média  \n**AI** - Alta importância  \n**MAI** - Muito alta importância")
     df_pesos_siglas = formatar_df_siglas(pd.DataFrame(pesos_))
-    df_pesos_siglas = df_pesos_siglas.rename(columns=criterios)
+    df_pesos_siglas = df_pesos_siglas.rename(columns=criterios_nomes)
     df_pesos_editada = st.data_editor(df_pesos_siglas, use_container_width=True, height=(len(df_pesos_siglas) + 1) * 35 + 3)
 
 # ----------------- RECALCULAR TOPSIS -----------------
 
-inv_criterios = {v: k for k, v in criterios.items()}
+inv_criterios = {v["criterio"]: k for k, v in criterios.items()}
 
 # 1. Recuperar e converter de volta as matrizes editadas pra arrays fuzzy
 dec_revertida = df_decisao_editada.rename(columns=inv_criterios).reset_index(drop=True)
