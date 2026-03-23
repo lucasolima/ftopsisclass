@@ -139,17 +139,17 @@ with aba_config:
 with aba_entradas:
     st.markdown("**Matriz de Decisão**", help="**Legenda:**  \n**MA** - Muito alto  \n**A** - Alto  \n**M** - Médio  \n**B** - Baixo  \n**MB** - Muito baixo")
     df_decisao_siglas = df_decisao_siglas_from_config.copy()
-    df_decisao_editada = st.data_editor(df_decisao_siglas, use_container_width=True, height=(len(df_decisao_siglas) + 1) * 35 + 3, key="entrada_editor")
+    df_decisao_editada = st.data_editor(df_decisao_siglas, use_container_width=True, height=(len(df_decisao_siglas) + 1) * 35 + 3, key="entrada_editor", disabled=True)
 
     st.markdown("**Matriz de Perfis**", help="**Legenda:**  \n**MA** - Muito alto  \n**A** - Alto  \n**M** - Médio  \n**B** - Baixo  \n**MB** - Muito baixo")
     df_perfil_siglas = formatar_df_siglas(pd.DataFrame(dados_perfil))
     df_perfil_siglas = df_perfil_siglas.rename(columns=criterios_nomes)
     df_perfil_siglas.index = ["Alta Prioridade", "Média Prioridade", "Baixa Prioridade"]
-    df_perfil_editada = st.data_editor(df_perfil_siglas, use_container_width=True, height=(len(df_perfil_siglas) + 1) * 35 + 3)
+    df_perfil_editada = st.data_editor(df_perfil_siglas, use_container_width=True, height=(len(df_perfil_siglas) + 1) * 35 + 3, disabled=True)
 
     st.markdown("**Pesos dos Critérios**", help="**Legenda:**  \n**MBI** - Muito baixa importância  \n**BI** - Baixa importância  \n**IM** - Importância média  \n**AI** - Alta importância  \n**MAI** - Muito alta importância")
     df_pesos_siglas = df_pesos_siglas_from_config.copy()
-    df_pesos_editada = st.data_editor(df_pesos_siglas, use_container_width=True, height=(len(df_pesos_siglas) + 1) * 35 + 3, key="pesos_editor")
+    df_pesos_editada = st.data_editor(df_pesos_siglas, use_container_width=True, height=(len(df_pesos_siglas) + 1) * 35 + 3, key="pesos_editor", disabled=True)
 
 # ----------------- RECALCULAR TOPSIS -----------------
 
