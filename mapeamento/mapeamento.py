@@ -11,10 +11,10 @@ alternativas = {
 }
 
 criterios = {
-    "C1": "Alinhamento",
-    "C2": "Exigência Legal",
-    "C3": "Abrangência",
-    "C4": "Complexidade",
+    "C1": "Alinhamento estratégico a planos institucionais",
+    "C2": "Exigência legal/regulatória ",
+    "C3": "Abrangência na comunidade universitária",
+    "C4": "Complexidade ",
     "C5": "Esforço",
-    "C6": "Tempo"
+    "C6": "Tempo Total",
 }
