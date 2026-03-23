@@ -14,7 +14,7 @@ from processamento.calcular_coeficiente_de_proximidade import calcular_coeficien
 from processamento.gerar_matriz_coeficientes import gerar_matriz_coeficientes
 
 st.set_page_config(page_title="Sistema Fuzzy TOPSIS", layout="wide")
-st.subheader("Sistema Fuzzy TOPSIS")
+st.subheader("Sistema Fuzzy TOPSIS Class")
 
 aba_config, aba_entradas, aba_resultados = st.tabs(["Configuração do Modelo", "Entradas de Dados", "Resultados"])
 
@@ -59,54 +59,59 @@ if "matriz_decisao_config" not in st.session_state:
     df_inicial = formatar_df_siglas(pd.DataFrame(dados_matriz_decisao))
     df_inicial = df_inicial.rename(columns=criterios_nomes)
     df_inicial = renomear_index_alternativas(df_inicial)
+    for col in df_inicial.columns:
+        df_inicial[col] = None
     st.session_state.matriz_decisao_config = df_inicial
 
 if "pesos_config" not in st.session_state:
     df_pesos_inicial = formatar_df_siglas(pd.DataFrame(pesos_))
     df_pesos_inicial = df_pesos_inicial.rename(columns=criterios_nomes)
+    for col in df_pesos_inicial.columns:
+        df_pesos_inicial[col] = None
     st.session_state.pesos_config = df_pesos_inicial
 
 with aba_config:
-    st.markdown("**Configuração Individual das Alternativas**")
+    st.markdown("**Formulário de Configuração das Demandas**")
     st.info("Selecione uma alternativa abaixo para preencher avaliar as descrições dos critérios de forma otimizada.")
     
     # 1. Selecionar qual alternativa editar
     lista_alts = list(st.session_state.matriz_decisao_config.index)
-    alt_selecionada = st.selectbox("Selecione a Alternativa para avaliar:", lista_alts)
+    alt_selecionada = st.selectbox("Selecione uma demanda para classificar:", options=lista_alts, index=None, placeholder="Selecione uma das opções")
     
-    # 2. Formulário de edição para a alternativa
-    st.divider()
-    st.markdown(f"**Avaliando:** {alt_selecionada}")
-    
-    col1, col2 = st.columns(2)
-    
-    # Percorrer critérios para gerar os selects
-    idx_crit = 0
-    for k, v in criterios.items():
-        col_nome = v["criterio"]
-        opcoes_desc = [desc[0] for desc in v["descricao"]]
-        mapa_sigla_desc = {desc[1]: desc[0] for desc in v["descricao"]}
-        mapa_desc_sigla = {desc[0]: desc[1] for desc in v["descricao"]}
+    if alt_selecionada:
+        # 2. Formulário de edição para a alternativa
+        st.markdown(f"**Classificando:** {alt_selecionada}")
         
-        # Valor atual convertido de Sigla (ex: "MA") para Descrição
-        sigla_atual = st.session_state.matriz_decisao_config.at[alt_selecionada, col_nome]
-        desc_atual = mapa_sigla_desc.get(sigla_atual, opcoes_desc[0])
-        idx_default = opcoes_desc.index(desc_atual) if desc_atual in opcoes_desc else 0
+        col1, col2 = st.columns(2)
         
-        with col1 if idx_crit % 2 == 0 else col2:
-            nova_desc = st.selectbox(
-                f"{col_nome}", 
-                options=opcoes_desc, 
-                index=idx_default,
-                key=f"sel_{alt_selecionada}_{col_nome}"
-            )
-            # Salvar de volta na tabela no formato sigla
-            st.session_state.matriz_decisao_config.at[alt_selecionada, col_nome] = mapa_desc_sigla[nova_desc]
-        idx_crit += 1
+        # Percorrer critérios para gerar os selects
+        idx_crit = 0
+        for k, v in criterios.items():
+            col_nome = v["criterio"]
+            opcoes_desc = [desc[0] for desc in v["descricao"]]
+            mapa_sigla_desc = {desc[1]: desc[0] for desc in v["descricao"]}
+            mapa_desc_sigla = {desc[0]: desc[1] for desc in v["descricao"]}
+            
+            # Valor atual convertido de Sigla (ex: "MA") para Descrição
+            sigla_atual = st.session_state.matriz_decisao_config.at[alt_selecionada, col_nome]
+            desc_atual = mapa_sigla_desc.get(sigla_atual, None)
+            idx_default = opcoes_desc.index(desc_atual) if desc_atual in opcoes_desc else None
+            
+            with col1 if idx_crit % 2 == 0 else col2:
+                nova_desc = st.selectbox(
+                    f"{col_nome}", 
+                    options=opcoes_desc, 
+                    index=idx_default,
+                    placeholder="Selecione uma das opções",
+                    key=f"sel_{alt_selecionada}_{col_nome}"
+                )
+                # Salvar de volta na tabela no formato sigla
+                st.session_state.matriz_decisao_config.at[alt_selecionada, col_nome] = mapa_desc_sigla[nova_desc] if nova_desc else None
+            idx_crit += 1
 
     st.divider()
     st.markdown("**Configuração dos Pesos dos Critérios**")
-    st.info("Atribua a importância para cada critério utilizado na avaliação.")
+    st.info("Atribua a importância para cada critério utilizado na classificação.")
     
     col3, col4 = st.columns(2)
     
@@ -120,17 +125,18 @@ with aba_config:
         
         # Valor atual convertido de Sigla (ex: "MAI") para Descrição de peso
         sigla_peso_atual = st.session_state.pesos_config.at[0, col_nome]
-        desc_peso_atual = mapa_sigla_peso.get(sigla_peso_atual, opcoes_peso_desc[0])
-        idx_peso_default = opcoes_peso_desc.index(desc_peso_atual) if desc_peso_atual in opcoes_peso_desc else 0
+        desc_peso_atual = mapa_sigla_peso.get(sigla_peso_atual, None)
+        idx_peso_default = opcoes_peso_desc.index(desc_peso_atual) if desc_peso_atual in opcoes_peso_desc else None
         
         with col3 if idx_peso % 2 == 0 else col4:
             novo_peso_desc = st.selectbox(
-                f"Peso para: {col_nome}", 
+                f"{col_nome}", 
                 options=opcoes_peso_desc, 
                 index=idx_peso_default,
+                placeholder="Selecione uma das opções",
                 key=f"peso_{col_nome}"
             )
-            st.session_state.pesos_config.at[0, col_nome] = mapa_peso_sigla[novo_peso_desc]
+            st.session_state.pesos_config.at[0, col_nome] = mapa_peso_sigla[novo_peso_desc] if novo_peso_desc else None
         idx_peso += 1
 
     df_decisao_siglas_from_config = st.session_state.matriz_decisao_config.copy()
@@ -139,21 +145,25 @@ with aba_config:
 with aba_entradas:
     st.markdown("**Matriz de Decisão**", help="**Legenda:**  \n**MA** - Muito alto  \n**A** - Alto  \n**M** - Médio  \n**B** - Baixo  \n**MB** - Muito baixo")
     df_decisao_siglas = df_decisao_siglas_from_config.copy()
-    df_decisao_editada = st.data_editor(df_decisao_siglas, use_container_width=True, height=(len(df_decisao_siglas) + 1) * 35 + 3, key="entrada_editor", disabled=True)
+    df_decisao_editada = st.data_editor(df_decisao_siglas, use_container_width=True, height=(len(df_decisao_siglas) + 1) * 35 + 3, key="entrada_editor")
 
     st.markdown("**Matriz de Perfis**", help="**Legenda:**  \n**MA** - Muito alto  \n**A** - Alto  \n**M** - Médio  \n**B** - Baixo  \n**MB** - Muito baixo")
     df_perfil_siglas = formatar_df_siglas(pd.DataFrame(dados_perfil))
     df_perfil_siglas = df_perfil_siglas.rename(columns=criterios_nomes)
     df_perfil_siglas.index = ["Alta Prioridade", "Média Prioridade", "Baixa Prioridade"]
-    df_perfil_editada = st.data_editor(df_perfil_siglas, use_container_width=True, height=(len(df_perfil_siglas) + 1) * 35 + 3, disabled=True)
+    df_perfil_editada = st.data_editor(df_perfil_siglas, use_container_width=True, height=(len(df_perfil_siglas) + 1) * 35 + 3)
 
     st.markdown("**Pesos dos Critérios**", help="**Legenda:**  \n**MBI** - Muito baixa importância  \n**BI** - Baixa importância  \n**IM** - Importância média  \n**AI** - Alta importância  \n**MAI** - Muito alta importância")
     df_pesos_siglas = df_pesos_siglas_from_config.copy()
-    df_pesos_editada = st.data_editor(df_pesos_siglas, use_container_width=True, height=(len(df_pesos_siglas) + 1) * 35 + 3, key="pesos_editor", disabled=True)
+    df_pesos_editada = st.data_editor(df_pesos_siglas, use_container_width=True, height=(len(df_pesos_siglas) + 1) * 35 + 3, key="pesos_editor")
 
 # ----------------- RECALCULAR TOPSIS -----------------
 
 inv_criterios = {v["criterio"]: k for k, v in criterios.items()}
+
+if df_decisao_editada.isnull().values.any() or df_pesos_editada.isnull().values.any():
+    st.warning("⚠️ O modelo não possui todos os dados preenchidos. Por favor, acesse a aba 'Configuração do Modelo' e preencha todos os critérios e pesos de todas as alternativas para gerar os resultados do TOPSIS.")
+    st.stop()
 
 # 1. Recuperar e converter de volta as matrizes editadas pra arrays fuzzy
 dec_revertida = df_decisao_editada.rename(columns=inv_criterios).reset_index(drop=True)
