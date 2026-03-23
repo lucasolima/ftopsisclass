@@ -73,3 +73,11 @@ criterios = {
                 ]
         },
 }
+
+importancia = {
+    "MBI": "Muito baixa importância",
+    "BI": "Baixa importância",
+    "IM": "Importância média",
+    "AI": "Alta importância",
+    "MAI": "Muito alta importância"
+}

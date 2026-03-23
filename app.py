@@ -5,7 +5,7 @@ from matrizes.matriz_decisao import matriz_decisao, dados_matriz_decisao
 from matrizes.matriz_perfil import matriz_perfil, dados_perfil
 from pesos_criterios import pesos, tipo_criterios, pesos_
 from variaveis_linguisticas import MB, B, M, A, MA, MBI, BI, IM, AI, MAI
-from mapeamento.mapeamento import alternativas, criterios
+from mapeamento.mapeamento import alternativas, criterios, importancia
 from processamento.normalizar_matriz import normalizar_matriz
 from processamento.ponderar_matriz import ponderar_matriz
 from processamento.obter_solucao_ideal import obter_solucao_ideal
@@ -61,6 +61,11 @@ if "matriz_decisao_config" not in st.session_state:
     df_inicial = renomear_index_alternativas(df_inicial)
     st.session_state.matriz_decisao_config = df_inicial
 
+if "pesos_config" not in st.session_state:
+    df_pesos_inicial = formatar_df_siglas(pd.DataFrame(pesos_))
+    df_pesos_inicial = df_pesos_inicial.rename(columns=criterios_nomes)
+    st.session_state.pesos_config = df_pesos_inicial
+
 with aba_config:
     st.markdown("**Configuração Individual das Alternativas**")
     st.info("Selecione uma alternativa abaixo para preencher avaliar as descrições dos critérios de forma otimizada.")
@@ -100,12 +105,36 @@ with aba_config:
         idx_crit += 1
 
     st.divider()
-    st.markdown("**Visão Geral da Matriz de Decisão (Siglas)**")
-    # Mostrar resumo
-    st.dataframe(st.session_state.matriz_decisao_config, use_container_width=True)
+    st.markdown("**Configuração dos Pesos dos Critérios**")
+    st.info("Atribua a importância para cada critério utilizado na avaliação.")
+    
+    col3, col4 = st.columns(2)
+    
+    idx_peso = 0
+    for k, v in criterios.items():
+        col_nome = v["criterio"]
+        # Extrair opções do dicionário importancia (ex: "MBI", "BI", ... -> "Muito baixa importância", ...)
+        opcoes_peso_desc = list(importancia.values())
+        mapa_sigla_peso = importancia  # {"MBI": "Muito baixa importância", ...}
+        mapa_peso_sigla = {desc: sigla for sigla, desc in importancia.items()}
+        
+        # Valor atual convertido de Sigla (ex: "MAI") para Descrição de peso
+        sigla_peso_atual = st.session_state.pesos_config.at[0, col_nome]
+        desc_peso_atual = mapa_sigla_peso.get(sigla_peso_atual, opcoes_peso_desc[0])
+        idx_peso_default = opcoes_peso_desc.index(desc_peso_atual) if desc_peso_atual in opcoes_peso_desc else 0
+        
+        with col3 if idx_peso % 2 == 0 else col4:
+            novo_peso_desc = st.selectbox(
+                f"Peso para: {col_nome}", 
+                options=opcoes_peso_desc, 
+                index=idx_peso_default,
+                key=f"peso_{col_nome}"
+            )
+            st.session_state.pesos_config.at[0, col_nome] = mapa_peso_sigla[novo_peso_desc]
+        idx_peso += 1
 
     df_decisao_siglas_from_config = st.session_state.matriz_decisao_config.copy()
-
+    df_pesos_siglas_from_config = st.session_state.pesos_config.copy()
 
 with aba_entradas:
     st.markdown("**Matriz de Decisão**", help="**Legenda:**  \n**MA** - Muito alto  \n**A** - Alto  \n**M** - Médio  \n**B** - Baixo  \n**MB** - Muito baixo")
@@ -119,9 +148,8 @@ with aba_entradas:
     df_perfil_editada = st.data_editor(df_perfil_siglas, use_container_width=True, height=(len(df_perfil_siglas) + 1) * 35 + 3)
 
     st.markdown("**Pesos dos Critérios**", help="**Legenda:**  \n**MBI** - Muito baixa importância  \n**BI** - Baixa importância  \n**IM** - Importância média  \n**AI** - Alta importância  \n**MAI** - Muito alta importância")
-    df_pesos_siglas = formatar_df_siglas(pd.DataFrame(pesos_))
-    df_pesos_siglas = df_pesos_siglas.rename(columns=criterios_nomes)
-    df_pesos_editada = st.data_editor(df_pesos_siglas, use_container_width=True, height=(len(df_pesos_siglas) + 1) * 35 + 3)
+    df_pesos_siglas = df_pesos_siglas_from_config.copy()
+    df_pesos_editada = st.data_editor(df_pesos_siglas, use_container_width=True, height=(len(df_pesos_siglas) + 1) * 35 + 3, key="pesos_editor")
 
 # ----------------- RECALCULAR TOPSIS -----------------
 
