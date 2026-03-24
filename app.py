@@ -14,9 +14,6 @@ from processamento.calcular_coeficiente_de_proximidade import calcular_coeficien
 from processamento.gerar_matriz_coeficientes import gerar_matriz_coeficientes
 
 st.set_page_config(page_title="Sistema Fuzzy TOPSIS", layout="wide")
-st.subheader("Sistema Fuzzy TOPSIS Class")
-
-aba_config, aba_entradas, aba_resultados = st.tabs(["Configuração do Modelo", "Entradas de Dados", "Resultados"])
 
 MAPA_SIGLAS = {
     "MB": MB, "B": B, "M": M, "A": A, "MA": MA,
@@ -33,7 +30,6 @@ def converter_para_sigla(val):
 
 def sigla_para_array(val):
     return MAPA_SIGLAS.get(val, val)
-
 
 criterios_nomes = {k: v["criterio"] for k, v in criterios.items()}
 
@@ -69,6 +65,30 @@ if "pesos_config" not in st.session_state:
     for col in df_pesos_inicial.columns:
         df_pesos_inicial[col] = None
     st.session_state.pesos_config = df_pesos_inicial
+
+if "matriz_perfil_config" not in st.session_state:
+    df_perfil_inicial = formatar_df_siglas(pd.DataFrame(dados_perfil))
+    df_perfil_inicial = df_perfil_inicial.rename(columns=criterios_nomes)
+    df_perfil_inicial.index = ["Alta Prioridade", "Média Prioridade", "Baixa Prioridade"]
+    st.session_state.matriz_perfil_config = df_perfil_inicial
+
+@st.dialog("Editar Matriz de Perfis", width="large")
+def modal_editar_perfis():
+    st.markdown("Edite os valores base das classes de perfis:")
+    df_editado = st.data_editor(st.session_state.matriz_perfil_config, use_container_width=True, height=(len(st.session_state.matriz_perfil_config) + 1) * 35 + 3, key="editor_modal_perfil")
+    if st.button("Salvar alterações", type="primary"):
+        st.session_state.matriz_perfil_config = df_editado
+        st.rerun()
+
+col_title, col_btn = st.columns([5, 1])
+with col_title:
+    st.subheader("Sistema Fuzzy TOPSIS Class")
+with col_btn:
+    st.write("") # Margem para alinhar com o titulo
+    if st.button("Editar Matriz de Perfis", use_container_width=True):
+        modal_editar_perfis()
+
+aba_config, aba_entradas, aba_resultados = st.tabs(["Configuração do Modelo", "Entradas de Dados", "Resultados"])
 
 with aba_config:
     st.markdown("**Formulário de Configuração das Demandas**")
@@ -138,7 +158,7 @@ with aba_config:
             )
             st.session_state.pesos_config.at[0, col_nome] = mapa_peso_sigla[novo_peso_desc] if novo_peso_desc else None
         idx_peso += 1
-
+    
     df_decisao_siglas_from_config = st.session_state.matriz_decisao_config.copy()
     df_pesos_siglas_from_config = st.session_state.pesos_config.copy()
 
@@ -148,10 +168,8 @@ with aba_entradas:
     df_decisao_editada = st.data_editor(df_decisao_siglas, use_container_width=True, height=(len(df_decisao_siglas) + 1) * 35 + 3, key="entrada_editor")
 
     st.markdown("**Matriz de Perfis**", help="**Legenda:**  \n**MA** - Muito alto  \n**A** - Alto  \n**M** - Médio  \n**B** - Baixo  \n**MB** - Muito baixo")
-    df_perfil_siglas = formatar_df_siglas(pd.DataFrame(dados_perfil))
-    df_perfil_siglas = df_perfil_siglas.rename(columns=criterios_nomes)
-    df_perfil_siglas.index = ["Alta Prioridade", "Média Prioridade", "Baixa Prioridade"]
-    df_perfil_editada = st.data_editor(df_perfil_siglas, use_container_width=True, height=(len(df_perfil_siglas) + 1) * 35 + 3)
+    df_perfil_siglas = st.session_state.matriz_perfil_config.copy()
+    df_perfil_editada = st.data_editor(df_perfil_siglas, use_container_width=True, height=(len(df_perfil_siglas) + 1) * 35 + 3, key="perfil_editor")
 
     st.markdown("**Pesos dos Critérios**", help="**Legenda:**  \n**MBI** - Muito baixa importância  \n**BI** - Baixa importância  \n**IM** - Importância média  \n**AI** - Alta importância  \n**MAI** - Muito alta importância")
     df_pesos_siglas = df_pesos_siglas_from_config.copy()
@@ -162,7 +180,7 @@ with aba_entradas:
 inv_criterios = {v["criterio"]: k for k, v in criterios.items()}
 
 if df_decisao_editada.isnull().values.any() or df_pesos_editada.isnull().values.any():
-    st.warning("⚠️ O modelo não possui todos os dados preenchidos. Por favor, acesse a aba 'Configuração do Modelo' e preencha todos os critérios e pesos de todas as alternativas para gerar os resultados do TOPSIS.")
+    st.warning("O modelo não possui todos os dados preenchidos. Por favor, acesse a aba 'Configuração do Modelo' e preencha todos os critérios e pesos de todas as alternativas para gerar os resultados do TOPSIS.")
     st.stop()
 
 # 1. Recuperar e converter de volta as matrizes editadas pra arrays fuzzy
