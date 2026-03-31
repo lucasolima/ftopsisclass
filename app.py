@@ -88,7 +88,7 @@ with col_btn:
     if st.button("Editar Matriz de Perfis", use_container_width=True):
         modal_editar_perfis()
 
-aba_config, aba_entradas, aba_resultados = st.tabs(["Configuração do Modelo", "Entradas de Dados", "Resultados"])
+aba_config, aba_pesos, aba_entradas, aba_resultados = st.tabs(["Configuração do Modelo", "Configuração dos Pesos", "Entradas de Dados", "Resultados"])
 
 with aba_config:
     st.markdown("**Formulário de Configuração das Demandas**")
@@ -128,8 +128,10 @@ with aba_config:
                 # Salvar de volta na tabela no formato sigla
                 st.session_state.matriz_decisao_config.at[alt_selecionada, col_nome] = mapa_desc_sigla[nova_desc] if nova_desc else None
             idx_crit += 1
+    
+    df_decisao_siglas_from_config = st.session_state.matriz_decisao_config.copy()
 
-    st.divider()
+with aba_pesos:
     st.markdown("**Configuração dos Pesos dos Critérios**")
     st.info("Atribua a importância para cada critério utilizado na classificação.")
     
@@ -159,7 +161,6 @@ with aba_config:
             st.session_state.pesos_config.at[0, col_nome] = mapa_peso_sigla[novo_peso_desc] if novo_peso_desc else None
         idx_peso += 1
     
-    df_decisao_siglas_from_config = st.session_state.matriz_decisao_config.copy()
     df_pesos_siglas_from_config = st.session_state.pesos_config.copy()
 
 with aba_entradas:
