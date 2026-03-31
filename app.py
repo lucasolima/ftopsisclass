@@ -92,42 +92,46 @@ aba_config, aba_pesos, aba_entradas, aba_resultados = st.tabs(["Configuração d
 
 with aba_config:
     st.markdown("**Formulário de Configuração das Demandas**")
-    st.info("Selecione uma alternativa abaixo para preencher avaliar as descrições dos critérios de forma otimizada.")
+    st.info("Preencha a avaliação das descrições dos critérios para cada demanda diretamente na estrutura abaixo.")
     
-    # 1. Selecionar qual alternativa editar
+    lista_criterios_chaves = list(criterios.keys())
+    nomes_criterios = [criterios[k]["criterio"] for k in lista_criterios_chaves]
+    
+    # Criar colunas: 1 para Demanda + N para Critérios
+    cols = st.columns([2] + [1] * len(nomes_criterios))
+    
+    # Headers
+    cols[0].markdown("**Demanda**")
+    for i, crit_name in enumerate(nomes_criterios):
+        cols[i+1].markdown(f"**{crit_name}**")
+        
     lista_alts = list(st.session_state.matriz_decisao_config.index)
-    alt_selecionada = st.selectbox("Selecione uma demanda para classificar:", options=lista_alts, index=None, placeholder="Selecione uma das opções")
     
-    if alt_selecionada:
-        # 2. Formulário de edição para a alternativa
-        st.markdown(f"**Classificando:** {alt_selecionada}")
+    for alt in lista_alts:
+        cols = st.columns([2] + [1] * len(nomes_criterios))
+        cols[0].markdown(f"*{alt}*")
         
-        col1, col2 = st.columns(2)
-        
-        # Percorrer critérios para gerar os selects
-        idx_crit = 0
-        for k, v in criterios.items():
+        for i, k in enumerate(lista_criterios_chaves):
+            v = criterios[k]
             col_nome = v["criterio"]
             opcoes_desc = [desc[0] for desc in v["descricao"]]
             mapa_sigla_desc = {desc[1]: desc[0] for desc in v["descricao"]}
             mapa_desc_sigla = {desc[0]: desc[1] for desc in v["descricao"]}
             
-            # Valor atual convertido de Sigla (ex: "MA") para Descrição
-            sigla_atual = st.session_state.matriz_decisao_config.at[alt_selecionada, col_nome]
+            sigla_atual = st.session_state.matriz_decisao_config.at[alt, col_nome]
             desc_atual = mapa_sigla_desc.get(sigla_atual, None)
             idx_default = opcoes_desc.index(desc_atual) if desc_atual in opcoes_desc else None
             
-            with col1 if idx_crit % 2 == 0 else col2:
+            with cols[i+1]:
                 nova_desc = st.selectbox(
-                    f"{col_nome}", 
-                    options=opcoes_desc, 
+                    f"{alt}_{col_nome}",
+                    options=opcoes_desc,
                     index=idx_default,
-                    placeholder="Selecione uma das opções",
-                    key=f"sel_{alt_selecionada}_{col_nome}"
+                    placeholder="Selecione...",
+                    label_visibility="collapsed",
+                    key=f"sel_{alt}_{k}"
                 )
-                # Salvar de volta na tabela no formato sigla
-                st.session_state.matriz_decisao_config.at[alt_selecionada, col_nome] = mapa_desc_sigla[nova_desc] if nova_desc else None
-            idx_crit += 1
+                st.session_state.matriz_decisao_config.at[alt, col_nome] = mapa_desc_sigla[nova_desc] if nova_desc else None
     
     df_decisao_siglas_from_config = st.session_state.matriz_decisao_config.copy()
 
@@ -135,31 +139,37 @@ with aba_pesos:
     st.markdown("**Configuração dos Pesos dos Critérios**")
     st.info("Atribua a importância para cada critério utilizado na classificação.")
     
-    col3, col4 = st.columns(2)
+    lista_criterios_chaves = list(criterios.keys())
+    nomes_criterios = [criterios[k]["criterio"] for k in lista_criterios_chaves]
     
-    idx_peso = 0
-    for k, v in criterios.items():
-        col_nome = v["criterio"]
-        # Extrair opções do dicionário importancia (ex: "MBI", "BI", ... -> "Muito baixa importância", ...)
-        opcoes_peso_desc = list(importancia.values())
-        mapa_sigla_peso = importancia  # {"MBI": "Muito baixa importância", ...}
-        mapa_peso_sigla = {desc: sigla for sigla, desc in importancia.items()}
+    cols = st.columns(len(nomes_criterios))
+    for i, crit_name in enumerate(nomes_criterios):
+        cols[i].markdown(f"**{crit_name}**")
         
-        # Valor atual convertido de Sigla (ex: "MAI") para Descrição de peso
+    cols_pesos = st.columns(len(nomes_criterios))
+    
+    opcoes_peso_desc = list(importancia.values())
+    mapa_sigla_peso = importancia
+    mapa_peso_sigla = {desc: sigla for sigla, desc in importancia.items()}
+    
+    for i, k in enumerate(lista_criterios_chaves):
+        v = criterios[k]
+        col_nome = v["criterio"]
+        
         sigla_peso_atual = st.session_state.pesos_config.at[0, col_nome]
         desc_peso_atual = mapa_sigla_peso.get(sigla_peso_atual, None)
         idx_peso_default = opcoes_peso_desc.index(desc_peso_atual) if desc_peso_atual in opcoes_peso_desc else None
         
-        with col3 if idx_peso % 2 == 0 else col4:
+        with cols_pesos[i]:
             novo_peso_desc = st.selectbox(
-                f"{col_nome}", 
-                options=opcoes_peso_desc, 
+                f"peso_{col_nome}",
+                options=opcoes_peso_desc,
                 index=idx_peso_default,
-                placeholder="Selecione uma das opções",
-                key=f"peso_{col_nome}"
+                placeholder="Selecione...",
+                label_visibility="collapsed",
+                key=f"peso_sel_{k}"
             )
             st.session_state.pesos_config.at[0, col_nome] = mapa_peso_sigla[novo_peso_desc] if novo_peso_desc else None
-        idx_peso += 1
     
     df_pesos_siglas_from_config = st.session_state.pesos_config.copy()
 
