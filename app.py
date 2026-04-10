@@ -13,7 +13,7 @@ from processamento.calcular_distancia_euclidiana import calcular_distancia_eucli
 from processamento.calcular_coeficiente_de_proximidade import calcular_coeficiente_de_proximidade
 from processamento.gerar_matriz_coeficientes import gerar_matriz_coeficientes
 
-st.set_page_config(page_title="Sistema Fuzzy TOPSIS", layout="wide")
+st.set_page_config(page_title="FTOPSIS Class - Customizações de SIGS", layout="wide")
 
 MAPA_SIGLAS = {
     "MB": MB, "B": B, "M": M, "A": A, "MA": MA,
