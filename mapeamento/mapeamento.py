@@ -45,21 +45,21 @@ criterios = {
     "C4": {
             "criterio": "Complexidade",
                 "descricao": [
-                    ["Altíssima complexidade (requisitos extremamente complexos e ambíguos, alta interdependência entre sistemas, muitas partes interessadas com necessidades conflitantes, alto risco de mudanças)", "MA", "MBI"],
-                    ["Alta complexidade (requisitos complexos e ambíguos, significativa interdependência entre sistemas, muitas partes interessadas, risco moderado a alto de mudanças)", "A", "BI"],
-                    ["Média complexidade (Requisitos moderadamente complexos e claros, interdependência entre sistemas, algumas partes interessadas, risco moderado de mudanças)", "M", "IM"],
-                    ["Baixa complexidade (Requisitos relativamente claros e precisos, interdependência limitada entre sistemas, algumas partes interessadas, baixo risco de mudanças)", "B", "AI"],
-                    ["Baixíssima complexidade  (Requisitos claramente definidos e precisos, mínima interdependência entre sistemas, poucas partes interessadas, muito baixo risco de mudanças)", "MB", "MAI"]
+                    ["Altíssima (requisitos extremamente complexos e ambíguos, alta interdependência entre sistemas, muitas partes interessadas com necessidades conflitantes, alto risco de mudanças)", "MA", "MBI"],
+                    ["Alta (requisitos complexos e ambíguos, significativa interdependência entre sistemas, muitas partes interessadas, risco moderado a alto de mudanças)", "A", "BI"],
+                    ["Média (Requisitos moderadamente complexos e claros, interdependência entre sistemas, algumas partes interessadas, risco moderado de mudanças)", "M", "IM"],
+                    ["Baixa (Requisitos relativamente claros e precisos, interdependência limitada entre sistemas, algumas partes interessadas, baixo risco de mudanças)", "B", "AI"],
+                    ["Baixíssima (Requisitos claramente definidos e precisos, mínima interdependência entre sistemas, poucas partes interessadas, muito baixo risco de mudanças)", "MB", "MAI"]
                 ]
         },
     "C5": {
             "criterio": "Esforço",
                 "descricao": [
-                    ["Altíssimo esforço (customização e integração de alta complexidade, envolvendo mais de um setor e dois ou mais desenvolvedores, com interdependências significativas e coordenação necessária entre equipes)", "MA", "MBI"],
-                    ["Alto esforço (customização que envolve dois ou mais desenvolvedores, tarefas de complexidade média a alta, requerendo coordenação entre desenvolvedores e possivelmente algumas outras áreas)", "A", "BI"],
-                    ["Médio esforço (customização que pode envolver um ou mais desenvolvedores, tarefas de complexidade média e algumas interdependências)", "M", "IM"],
-                    ["Baixo esforço (customização pontual, envolvendo um desenvolvedor, tarefas claramente definidas e de baixa complexidade)", "B", "AI"],
-                    ["Baixíssimo esforço (tarefas simples que envolvem um único desenvolvedor por um curto período)", "MB", "MAI"]
+                    ["Altíssimo (customização e integração de alta complexidade, envolvendo mais de um setor e dois ou mais desenvolvedores, com interdependências significativas e coordenação necessária entre equipes)", "MA", "MBI"],
+                    ["Alto (customização que envolve dois ou mais desenvolvedores, tarefas de complexidade média a alta, requerendo coordenação entre desenvolvedores e possivelmente algumas outras áreas)", "A", "BI"],
+                    ["Médio (customização que pode envolver um ou mais desenvolvedores, tarefas de complexidade média e algumas interdependências)", "M", "IM"],
+                    ["Baixo (customização pontual, envolvendo um desenvolvedor, tarefas claramente definidas e de baixa complexidade)", "B", "AI"],
+                    ["Baixíssimo (tarefas simples que envolvem um único desenvolvedor por um curto período)", "MB", "MAI"]
                 ]
         },
     "C6": {

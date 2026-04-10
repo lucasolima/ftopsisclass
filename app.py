@@ -82,7 +82,7 @@ def modal_editar_perfis():
 
 col_title, col_btn = st.columns([5, 1])
 with col_title:
-    st.subheader("Sistema Fuzzy TOPSIS Class")
+    st.subheader("FTOPSIS Class - Customizações de SIGS")
 with col_btn:
     st.write("") # Margem para alinhar com o titulo
     if st.button("Editar Matriz de Perfis", use_container_width=True):
